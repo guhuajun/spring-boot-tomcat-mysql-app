@@ -1,9 +1,9 @@
-version: "2.4"
+version: "3"
 
 services:
-  db:
+  sbtm-db:
     image: mysql:5.7
-    container_name: db
+    container_name: sbtm-db
     environment:
       - MYSQL_ROOT_PASSWORD=Password01!
       - MYSQL_DATABASE=demo
@@ -12,18 +12,18 @@ services:
     networks:
       sbtm_demo:
         aliases:
-          - db
+          - sbtm-db
     ports:
       - 3306:3306
-    healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
-  web:
+    # healthcheck:
+    #   test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+    #   timeout: 20s
+    #   retries: 10
+  sbtm-web:
     image: meirwa/spring-boot-tomcat-mysql-app
-    container_name: web
+    container_name: sbtm-web
     environment:
-      - DB_URL=db
+      - DB_URL=sbtm-db
       - DB_PORT=3306
       - DB_NAME=demo
       - DB_USER=demo
@@ -31,24 +31,24 @@ services:
     networks:
       sbtm_demo:
         aliases:
-          - web
+          - sbtm-web
     ports:
       - 8080:8080
-    depends_on:
-      db:
-        condition: service_healthy
-  adminer:
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
+  sbtm-adminer:
     image: adminer:4.6.2
-    container_name: adminer
+    container_name: sbtm-adminer
     networks:
       sbtm_demo:
         aliases:
-          - web
+          - sbtm-adminer
     ports:
       - 8081:8080
-    depends_on:
-      db:
-        condition: service_healthy
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
 
 networks:
   sbtm_demo:
